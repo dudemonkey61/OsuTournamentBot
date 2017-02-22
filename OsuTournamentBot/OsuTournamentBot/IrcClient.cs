@@ -33,7 +33,7 @@ namespace OsuTournamentBot
 
         public void joinRoom(string channel)
         {
-            outputStream.writeLine("JOIN #" + channel);
+            outputStream.WriteLine("JOIN #" + channel);
             outputStream.Flush();
         }
 
