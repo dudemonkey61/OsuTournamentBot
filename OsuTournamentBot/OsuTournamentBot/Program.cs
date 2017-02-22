@@ -17,11 +17,17 @@ namespace OsuTournamentBot
             //The value in the function is made up for security reasons
             MultiMatch multiMatch = theApi.GetMatch(05197635);
 
-            Console.WriteLine(multiMatch.match.match_id);
-            Console.WriteLine(multiMatch.match.name);
-            Console.WriteLine(multiMatch.match.start_time.ToString());
 
-            IrcClient mp1 = new IrcClient("cho.ppy.sh", 6667, "BotAccount", "Magic Password");
+            IrcClient mp1 = new IrcClient("cho.ppy.sh", 6667, "OshieteKudasai", "Here was my password");
+            mp1.joinRoom("[_Yui_]");
+            while(true)
+            {
+                string message = mp1.readMessage();
+                if(message!=null)
+                {
+                    mp1.sendIrcMessage("Yo Yo");
+                }
+            }
 
         }
     }
