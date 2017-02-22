@@ -18,7 +18,8 @@ namespace OsuTournamentBot
             MultiMatch multiMatch = theApi.GetMatch(05197635);
 
 
-            IrcClient mp1 = new IrcClient("cho.ppy.sh", 6667, "OshieteKudasai", "Here was my password");
+            IrcClient mp1 = new IrcClient("cho.ppy.sh", 6667, "OshieteKudasai", "3f65aef0");
+            mp1.joinPM("[_Yui_]");
             mp1.joinRoom("[_Yui_]");
             while(true)
             {

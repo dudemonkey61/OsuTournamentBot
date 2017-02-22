@@ -24,7 +24,7 @@ namespace OsuTournamentBot
             inputStream = new StreamReader(tcpClient.GetStream());
             outputStream = new StreamWriter(tcpClient.GetStream());
 
-            outputStream.WriteLine("Pass " + password);
+            outputStream.WriteLine("PASS " + password);
             outputStream.WriteLine("NICK " + userName);
             outputStream.WriteLine("USER " + userName + " 8 * :" + userName);
             outputStream.Flush();
@@ -47,6 +47,12 @@ namespace OsuTournamentBot
         {
             string message = inputStream.ReadLine();
             return message;
+        }
+
+        public void joinPM(string PM)
+        {
+            outputStream.WriteLine(@"/query " + PM);
+            outputStream.Flush();
         }
     }
 }
