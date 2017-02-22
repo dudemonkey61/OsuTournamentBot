@@ -20,6 +20,9 @@ namespace OsuTournamentBot
             Console.WriteLine(multiMatch.match.match_id);
             Console.WriteLine(multiMatch.match.name);
             Console.WriteLine(multiMatch.match.start_time.ToString());
+
+            IrcClient mp1 = new IrcClient("cho.ppy.sh", 6667, "BotAccount", "Magic Password");
+
         }
     }
 }

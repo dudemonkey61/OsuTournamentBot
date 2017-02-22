@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IrcClient.cs" />
     <Compile Include="OsuAPI\DataObjects\Game.cs" />
     <Compile Include="OsuAPI\DataObjects\Match.cs" />
     <Compile Include="OsuAPI\DataObjects\MatchScore.cs" />
