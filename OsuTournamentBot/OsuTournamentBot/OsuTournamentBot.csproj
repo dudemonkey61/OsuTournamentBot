@@ -47,15 +47,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataObjects\Game.cs" />
-    <Compile Include="DataObjects\Match.cs" />
-    <Compile Include="DataObjects\MatchScore.cs" />
-    <Compile Include="DataObjects\MultiMatch.cs" />
-    <Compile Include="DataObjects\Score.cs" />
-    <Compile Include="Enums\Mode.cs" />
-    <Compile Include="Enums\ScoringType.cs" />
-    <Compile Include="Enums\TeamType.cs" />
-    <Compile Include="OsuAPI.cs" />
+    <Compile Include="OsuAPI\DataObjects\Game.cs" />
+    <Compile Include="OsuAPI\DataObjects\Match.cs" />
+    <Compile Include="OsuAPI\DataObjects\MatchScore.cs" />
+    <Compile Include="OsuAPI\DataObjects\MultiMatch.cs" />
+    <Compile Include="OsuAPI\DataObjects\Score.cs" />
+    <Compile Include="OsuAPI\Enums\Mode.cs" />
+    <Compile Include="OsuAPI\Enums\ScoringType.cs" />
+    <Compile Include="OsuAPI\Enums\TeamType.cs" />
+    <Compile Include="OsuAPI\OsuAPI.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -63,7 +63,9 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="DontLetPeopleSeeThis.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

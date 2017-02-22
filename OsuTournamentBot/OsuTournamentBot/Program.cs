@@ -12,10 +12,10 @@ namespace OsuTournamentBot
         public static void Main(string[] args)
         { 
             //The value in the function is made up for security reasons
-            OsuAPI theApi = new OsuAPI("b69187236419834n7612hjwe89r6e98vqwmner6qwe786");
+            OsuAPI theApi = new OsuAPI("aw4e7we35wawa843754587965fg23756fa976efriuwf");
 
             //The value in the function is made up for security reasons
-            MultiMatch multiMatch = theApi.GetMatch(15726351);
+            MultiMatch multiMatch = theApi.GetMatch(05197635);
 
             Console.WriteLine(multiMatch.match.match_id);
             Console.WriteLine(multiMatch.match.name);
