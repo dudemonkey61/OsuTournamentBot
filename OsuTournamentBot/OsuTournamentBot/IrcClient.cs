@@ -11,6 +11,7 @@ namespace OsuTournamentBot
     class IrcClient
     {
         private string userName;
+        private string channel;
 
         private TcpClient tcpClient;
         private StreamReader inputStream;
@@ -33,6 +34,7 @@ namespace OsuTournamentBot
 
         public void joinRoom(string channel)
         {
+            this.channel = channel;
             outputStream.WriteLine("JOIN #" + channel);
             outputStream.Flush();
         }
@@ -49,10 +51,14 @@ namespace OsuTournamentBot
             return message;
         }
 
-        public void joinPM(string PM)
+        public void sendPrivMessage(string message, string username)
         {
-            outputStream.WriteLine(@"/query " + PM);
-            outputStream.Flush();
+            sendIrcMessage("PRIVMSG "+username+" :"+message);
+        }
+
+        public void sendChatMessage(string message, string channel)
+        {
+            sendIrcMessage("PRIVMSG #" + channel + " :" + message);
         }
     }
 }
