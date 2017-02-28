@@ -23,6 +23,7 @@ namespace OsuTournamentBot
 
         public IrcClient(string ip, int port, string userName, string password)
         {
+
             this.userName = userName;
             this.port = port;
             this.password = password;
@@ -65,13 +66,17 @@ namespace OsuTournamentBot
 
         public void sendPrivMessage(string message, string username)
         {
-            sendIrcMessage("PRIVMSG "+username+" :"+message);
+            sendIrcMessage("PRIVMSG " + username + " :" + message);
         }
 
         public void sendChatMessage(string message, string channel)
         {
             sendIrcMessage("PRIVMSG #" + channel + " :" + message);
         }
+
+        
+
+        
         
     }
 }
