@@ -48,6 +48,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IrcClient.cs" />
+    <Compile Include="Match Interaction\Lobby Setup.cs" />
+    <Compile Include="Match Interaction\Map-Pick Setup.cs" />
+    <Compile Include="Match Interaction\WarmUp-Ban Setup.cs" />
     <Compile Include="OsuAPI\DataObjects\Game.cs" />
     <Compile Include="OsuAPI\DataObjects\Match.cs" />
     <Compile Include="OsuAPI\DataObjects\MatchScore.cs" />
@@ -67,6 +70,7 @@
   <ItemGroup>
     <Content Include="DontLetPeopleSeeThis.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
