@@ -27,9 +27,9 @@ namespace OsuTournamentBot
             IrcClient mp1 = new IrcClient("cho.ppy.sh", 6667, ircUserName, ircAuthKey);
             Lobby_Setup lobby_1 = new Lobby_Setup(mp1);
             System.Threading.Thread.Sleep(5000);
-            mp1.joinRoom("osu");
-            mp1.joinRoom("mp_31461454");
-
+            //mp1.joinRoom("osu");
+            mp1.joinRoom("mp_31578706");
+            
 
 
 
@@ -38,66 +38,23 @@ namespace OsuTournamentBot
                 string message = mp1.readMessage();
                 if (message == null)
                 {
-
-                    mp1.connect();
-                    mp1.joinRoom("osu");
-                    message = mp1.readMessage();
+                    do
+                    {
+                        mp1.connect();
+                        mp1.joinRoom("osu");
+                        message = mp1.readMessage();
+                    } while (message == null);
 
                 }
+                //In case bot were to disconnect, it will try to connect again for eternity
+
 
                 if (message == "PING cho.ppy.sh")
                 {
                     mp1.sendIrcMessage("PONG cho.ppy.sh");
-                    Console.WriteLine("PONG cho.ppy.sh");
                 }
+                //PING PONG feature (timeout prevention)
 
-
-
-
-
-                /*switch (Console.ReadLine())
-                {
-                    case "quit":
-                        Environment.Exit(0);
-                        break;
-
-                    case "!mp make":
-                        Console.Write("Please write the name of the room you want to make -");
-                        string mpName = Console.ReadLine();
-                        mp1.sendPrivMessage("!mp make " + mpName, "BanchoBot");
-                        if (message.Contains(":BanchoBot!cho@ppy.sh PRIVMSG " + ircUserName + ":Created the tournament match"))
-                        {
-                            matchId = message.Skip(51 + ":BanchoBot!cho@ppy.sh PRIVMSG ".Length).Take(8).ToString();
-                            Console.WriteLine(matchId);
-                        }
-                        break;
-
-                    case "!mp join":
-                        mp1.joinRoom("mp_31339974");
-                        mp1.sendChatMessage(@"!mp move OshieteKudasai 1", "mp_" + matchId);
-                        if (message.Contains(":BanchoBot!cho@ppy.sh PRIVMSG "))
-                        {
-                            Console.WriteLine(message);
-                        }
-                        break;
-
-                    case "!PM BanchoBot":
-
-                        mp1.sendPrivMessage("!help", "BanchoBot");
-                        if (message.Contains(":BanchoBot!cho@ppy.sh PRIVMSG "))
-                        {
-                            Console.WriteLine(message);
-                        }
-                        break;
-
-                    case "ping":
-                        Console.WriteLine("pong");
-                        break;
-                default:
-                    {
-                        break;
-                    }
-                }*/
 
                 if (mp1.tcpClient.Connected)
                 {
@@ -112,8 +69,14 @@ namespace OsuTournamentBot
                         )
                     {
                         Console.WriteLine(message);
+                        if (message == "PING cho.ppy.sh")
+                        {
+                            Console.WriteLine("PONG cho.ppy.sh");
+                        }
                     }
                 }
+                //Main function for reading messages from IRC / it will omit useles part from cho.ppy.sh (QUIT/JOIN/PART)
+
 
                 if (message.Contains("!;mp make"))
                 {
@@ -126,6 +89,7 @@ namespace OsuTournamentBot
                         }
                     }
                 }
+                //Experimental "!;mp make" function, using Lobby_Setup.cs 
             }
         }
     }

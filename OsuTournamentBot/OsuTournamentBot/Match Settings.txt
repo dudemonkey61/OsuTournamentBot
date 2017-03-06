@@ -1,0 +1,3 @@
+﻿size=0// 1-16
+teammode=0// 0: Head To Head, 1: Tag Coop, 2: Team Vs, 3: Tag Team Vs
+scoremode=0// 0: Score, 1: Accuracy, 2: Combo , 3: ScoreV2

@@ -13,7 +13,8 @@ namespace OsuTournamentBot.Match_Interaction
         string matchId;
         string matchLink;
         string mpName;
-        string mpHost;
+        string mpCreator;
+        string channelName;
 
         public Lobby_Setup(IrcClient Irc)
         {
@@ -26,22 +27,35 @@ namespace OsuTournamentBot.Match_Interaction
             mpName = message.Remove(0,message.IndexOf("!;mp make") + 10).ToString();
             //skiping format of msg sent by irc (:username!cho@...)
 
-            mpHost = message.Remove(0, 1);
-            mpHost = mpHost.Remove(mpHost.IndexOf("!cho@ppy.sh"), mpHost.Length - mpHost.IndexOf("!cho@ppy.sh"));
-
+            mpCreator = message.Remove(0, 1);
+            mpCreator = mpCreator.Remove(mpCreator.IndexOf("!cho@ppy.sh"), mpCreator.Length - mpCreator.IndexOf("!cho@ppy.sh"));
             //Geting mpHost name into string for future use
 
             Irc.sendPrivMessage("!mp make " + mpName, "BanchoBot");
             //sending request to BanchoBot to make mp lobby with chosen name ^^
-            while (true)
+
+            int receiveMsgLoopCount = 0;
+            //msg counter for next do() while() loop
+            do
             {
                 message = Irc.readMessage();
-                if (message.Contains(
-                ":BanchoBot!cho@ppy.sh PRIVMSG ") &&
-                message.Contains(
-                ":Created the tournament match"
-                )) { break; }
+                receiveMsgLoopCount++;
+
             }
+            while
+            (!
+                (message.Contains
+                    (
+                    ":BanchoBot!cho@ppy.sh PRIVMSG "
+                    ) &&
+                message.Contains
+                    (
+                    ":Created the tournament match"
+                    )
+                ) || receiveMsgLoopCount == 25
+             );
+            //Looping thorugh 25 messages until it were to find MSG from BanchoBot (to get msg containing lobby data)
+
             if (message.Contains(
                 ":BanchoBot!cho@ppy.sh PRIVMSG ") &&
                 message.Contains(
@@ -56,27 +70,78 @@ namespace OsuTournamentBot.Match_Interaction
 
                 matchId = matchLink.Remove(0,22);
                 //geting the 8 char mp id from msg sent by BanchoBot
-                Console.WriteLine("");
-                Console.WriteLine("Lobby name ={0}",mpName);
-                Console.WriteLine("Lobby Host ={0}",mpHost);
-                Console.WriteLine("Lobby Link ={0}",matchLink);
-                Console.WriteLine("Lobby Id ={0}",matchId);
-                Console.WriteLine("");
-
-                Irc.sendPrivMessage("Lobby name ="+ mpName, mpHost);
-                Irc.sendPrivMessage("Lobby Host =" + mpHost, mpHost);
-                Irc.sendPrivMessage("Lobby Link ="+ matchLink, mpHost);
-                Irc.sendPrivMessage("Lobby Id =" + matchId, mpHost);
-
-                Irc.joinRoom("mp_" + matchId);
 
 
+                Console.WriteLine("------------------------");
+
+                Console.WriteLine("Lobby name ="+@"{0}", mpName);
+                Console.WriteLine("Lobby Creator ="+@"{0}", mpCreator);
+                Console.WriteLine("Lobby Link ={0}", matchLink);
+                Console.WriteLine("Lobby Id ={0}", matchId);
+
+                Console.WriteLine("------------------------");
+                //Console Log (just for now, to get if everything is alright)
+
+                Irc.sendPrivMessage("Lobby Name ="+ @mpName, mpCreator);
+                Irc.sendPrivMessage("Lobby Host =" + @mpCreator, mpCreator);
+                Irc.sendPrivMessage("Lobby Link ="+ matchLink, mpCreator);
+                Irc.sendPrivMessage("Lobby Id   =" + matchId, mpCreator);
+                //Priv msg for "Host" - person who made lobby
+
+                channelName = "mp_" + matchId;
+                Irc.joinRoom(channelName);
+                //Joining match lobby by bot
+
+                string[] lobbySettings = File.ReadAllLines("Match Settings.txt");
+                string scoremode, teammode, size;
+                //variables for "Match Settings.txt"
+
+                if (lobbySettings[0].Remove(0, 6) != @"// 1-16")
+                {
+                    size = lobbySettings[0];
+                    size = size.Remove(0, 5);
+                    size = size.Remove(2, size.Length - 2);
+                }
+                else
+                {
+                    size = lobbySettings[0];
+                    size = size.Remove(0, 5);
+                    size = size.Remove(1, size.Length - 1);
+                }
+                //Geting size from "Match Settings.txt"
+
+                teammode = lobbySettings[1];
+                teammode = teammode.Remove(0, 9);
+                teammode = teammode.Remove(1, teammode.Length - 1);
+                //Geting teammode from "Match Settings.txt"
+
+                scoremode = lobbySettings[2];
+                scoremode = scoremode.Remove(0, 10);
+                scoremode = scoremode.Remove(1, scoremode.Length - 1);
+                //Geting scoremode from Match Settings.txt file
+
+                Console.WriteLine(size + " " + teammode + " " + scoremode);
+                //Console Log (for now) for checking data from "Match Settings.txt"
+
+                Irc.sendChatMessage
+                    ("!mp set " +
+                    teammode +
+                    " " +
+                    scoremode +
+                    " " +
+                    size,
+                    channelName);
+                //Sending MSG to lobby to change it's settings to the ones specified in "Match Settings.txt"
 
 
 
-                //Irc.sendChatMessage("!mp move " + mpHost + " 1", "mp_" + matchId);
-                //System.Threading.Thread.Sleep(100);
-                //Irc.sendChatMessage("!mp host " + mpHost, "mp_" + matchId);
+
+                Irc.sendChatMessage("!mp move " + mpCreator + " 1", "mp_" + matchId);
+                //Forcefully moving the Creator to lobby
+
+
+                Irc.sendChatMessage("!mp host " + mpCreator, "mp_" + matchId);
+                //Giving Host to the lobby Creator
             }
             
 
