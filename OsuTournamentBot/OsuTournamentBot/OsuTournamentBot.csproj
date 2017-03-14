@@ -50,6 +50,8 @@
     <Compile Include="IrcClient.cs" />
     <Compile Include="Match Interaction\Lobby Setup.cs" />
     <Compile Include="Match Interaction\Map-Pick Setup.cs" />
+    <Compile Include="Match Interaction\Player.cs" />
+    <Compile Include="Match Interaction\Team.cs" />
     <Compile Include="Match Interaction\WarmUp-Ban Setup.cs" />
     <Compile Include="OsuAPI\DataObjects\Game.cs" />
     <Compile Include="OsuAPI\DataObjects\Match.cs" />
@@ -72,6 +74,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Match Settings.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PlayersAndTeams.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

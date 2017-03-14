@@ -8,5 +8,14 @@ namespace OsuTournamentBot.Match_Interaction
 {
     class WarmUp_Ban_Setup
     {
+        List<Team> Teams;
+        IrcClient lobby_client;
+        public WarmUp_Ban_Setup(List<Team> Teams ,IrcClient lobby_client)
+        {
+            this.Teams = Teams;
+            this.lobby_client = lobby_client;
+        }
+
+
     }
 }

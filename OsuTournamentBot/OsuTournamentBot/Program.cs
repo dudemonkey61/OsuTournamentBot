@@ -24,11 +24,12 @@ namespace OsuTournamentBot
 
             string[] alphaTester = new string[] { "OshieteKudasai", "[_Yui_]", "AlexDark69" };
 
+
             IrcClient mp1 = new IrcClient("cho.ppy.sh", 6667, ircUserName, ircAuthKey);
             Lobby_Setup lobby_1 = new Lobby_Setup(mp1);
-            System.Threading.Thread.Sleep(5000);
+            System.Threading.Thread.Sleep(500);
             //mp1.joinRoom("osu");
-            mp1.joinRoom("mp_31578706");
+            mp1.joinRoom("mp_31660566");
             
 
 
@@ -76,7 +77,7 @@ namespace OsuTournamentBot
                     }
                 }
                 //Main function for reading messages from IRC / it will omit useles part from cho.ppy.sh (QUIT/JOIN/PART)
-
+                
 
                 if (message.Contains("!;mp make"))
                 {
@@ -86,6 +87,23 @@ namespace OsuTournamentBot
                         {
                             lobby_1.makeLobby(message);
                             break;
+                        }
+                    }
+                }
+
+                if (message.Contains("!;Contestants"))
+                {
+                    lobby_1.readMatchContestants();
+                    lobby_1.writeMatchContestants();
+                }
+
+                for(int i = 0; i < lobby_1.countTeams; i++)
+                {
+                    for(int j = 0; j < lobby_1.Teams[i].countPlayers; j++)
+                    {
+                        if (message.Contains(lobby_1.Teams[i].Players_nicks[j]))
+                        {
+                            lobby_1.movePlayer(lobby_1.Teams[i].Players_nicks[j],lobby_1.slot++);
                         }
                     }
                 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using OsuTournamentBot.Match_Interaction;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,16 +17,50 @@ namespace OsuTournamentBot.Match_Interaction
         string mpName;
         string mpCreator;
         string channelName;
+        public int countTeams;
+        public List<Team> Teams = new List<Team>();
+        public int slot=1;
+        
 
         public Lobby_Setup(IrcClient Irc)
         {
             this.Irc = Irc;
         }
 
+        public void readMatchContestants()
+        {
+            string[] TeamsAndPlayers = File.ReadAllLines("PlayersAndTeams.txt");
+            int totalPlayers = 0;
+            string test = TeamsAndPlayers[0];
+            test = test.Remove(0, 19);
+            test = test.Remove(1, 52);
+            countTeams = int.Parse(test);
+            for (int i = 0; i < countTeams; i++)
+            {
+                Teams.Add(new Team(i, totalPlayers, TeamsAndPlayers));
+                Teams[i].getPlayers(i);
+                totalPlayers += Teams[i].countPlayers;
+            }
+        }
+        public void writeMatchContestants()
+        {
+            Console.WriteLine("");
+            for (int i = 0; i < countTeams; i++)
+            {
+                Console.WriteLine("Team {0} Players :", i + 1);
+                Console.WriteLine();
+                for (int j = 0; j < Teams[i].countPlayers; j++)
+                {
+                    Console.WriteLine("- " + Teams[i].Players_nicks[j]);
+                }
+                Console.WriteLine();
+            }
+        }
+
         public void makeLobby(string message)
         {
 
-            mpName = message.Remove(0,message.IndexOf("!;mp make") + 10).ToString();
+            mpName = message.Remove(0, message.IndexOf("!;mp make") + 10).ToString();
             //skiping format of msg sent by irc (:username!cho@...)
 
             mpCreator = message.Remove(0, 1);
@@ -65,26 +101,26 @@ namespace OsuTournamentBot.Match_Interaction
 
             {
                 matchLink = message.Remove(0, message.IndexOf("https"));
-                matchLink = matchLink.Remove(matchLink.IndexOf("mp") + 11, matchLink.Length-matchLink.IndexOf("mp")-11);
+                matchLink = matchLink.Remove(matchLink.IndexOf("mp") + 11, matchLink.Length - matchLink.IndexOf("mp") - 11);
                 //geting the 8 char mp id from msg sent by BanchoBot
 
-                matchId = matchLink.Remove(0,22);
+                matchId = matchLink.Remove(0, 22);
                 //geting the 8 char mp id from msg sent by BanchoBot
 
 
                 Console.WriteLine("------------------------");
 
-                Console.WriteLine("Lobby name ="+@"{0}", mpName);
-                Console.WriteLine("Lobby Creator ="+@"{0}", mpCreator);
+                Console.WriteLine("Lobby name =" + @"{0}", mpName);
+                Console.WriteLine("Lobby Creator =" + @"{0}", mpCreator);
                 Console.WriteLine("Lobby Link ={0}", matchLink);
                 Console.WriteLine("Lobby Id ={0}", matchId);
 
                 Console.WriteLine("------------------------");
                 //Console Log (just for now, to get if everything is alright)
 
-                Irc.sendPrivMessage("Lobby Name ="+ @mpName, mpCreator);
+                Irc.sendPrivMessage("Lobby Name =" + @mpName, mpCreator);
                 Irc.sendPrivMessage("Lobby Host =" + @mpCreator, mpCreator);
-                Irc.sendPrivMessage("Lobby Link ="+ matchLink, mpCreator);
+                Irc.sendPrivMessage("Lobby Link =" + matchLink, mpCreator);
                 Irc.sendPrivMessage("Lobby Id   =" + matchId, mpCreator);
                 //Priv msg for "Host" - person who made lobby
 
@@ -142,9 +178,27 @@ namespace OsuTournamentBot.Match_Interaction
 
                 Irc.sendChatMessage("!mp host " + mpCreator, "mp_" + matchId);
                 //Giving Host to the lobby Creator
-            }
-            
 
+                invitePlayers();
+            }
         }
+        public void invitePlayers()
+        {
+            for (int i = 0; i < countTeams; i++)
+            {
+                for (int j = 0; j < Teams[i].countPlayers; j++)
+                {
+                    Irc.sendPrivMessage("Do you want to be moved into " + mpName + " lobby? : {!; 1} - yes | {!; 2} - no", Teams[i].Players_nicks[j]);
+                }
+            }
+        }
+
+        public void movePlayer(string nick,int slot)
+        {
+            Irc.sendChatMessage("!mp move " + nick + " " + slot, "#mp_" + matchId);
+        }
+
+
     }
 }
+
