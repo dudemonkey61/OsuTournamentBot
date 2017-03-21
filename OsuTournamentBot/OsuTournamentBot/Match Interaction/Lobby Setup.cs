@@ -12,15 +12,17 @@ namespace OsuTournamentBot.Match_Interaction
     class Lobby_Setup
     {
         IrcClient Irc;
-        string matchId;
+        private string matchId;
+
+
         string matchLink;
         string mpName;
         string mpCreator;
         string channelName;
         public int countTeams;
         public List<Team> Teams = new List<Team>();
-        public int slot=1;
-        
+        public int slot = 1;
+
 
         public Lobby_Setup(IrcClient Irc)
         {
@@ -31,15 +33,15 @@ namespace OsuTournamentBot.Match_Interaction
         {
             string[] TeamsAndPlayers = File.ReadAllLines("PlayersAndTeams.txt");
             int totalPlayers = 0;
-            string test = TeamsAndPlayers[0];
-            test = test.Remove(0, 19);
-            test = test.Remove(1, 52);
-            countTeams = int.Parse(test);
+            string helpString = TeamsAndPlayers[0];
+            helpString = helpString.Remove(0, helpString.IndexOf("[") + 1);
+            helpString =helpString.Remove(helpString.IndexOf("]"), helpString.Length - 1);
+            countTeams = int.Parse(helpString);
             for (int i = 0; i < countTeams; i++)
             {
                 Teams.Add(new Team(i, totalPlayers, TeamsAndPlayers));
-                Teams[i].getPlayers(i);
-                totalPlayers += Teams[i].countPlayers;
+                Teams[i].readPlayers(i);
+                totalPlayers += Teams[i].GetPlayersCount();
             }
         }
         public void writeMatchContestants()
@@ -49,9 +51,9 @@ namespace OsuTournamentBot.Match_Interaction
             {
                 Console.WriteLine("Team {0} Players :", i + 1);
                 Console.WriteLine();
-                for (int j = 0; j < Teams[i].countPlayers; j++)
+                for (int j = 0; j < Teams[i].GetPlayersCount(); j++)
                 {
-                    Console.WriteLine("- " + Teams[i].Players_nicks[j]);
+                    Console.WriteLine("- " + Teams[i].GetPlayersNicks()[j]);
                 }
                 Console.WriteLine();
             }
@@ -59,6 +61,7 @@ namespace OsuTournamentBot.Match_Interaction
 
         public void makeLobby(string message)
         {
+            readMatchContestants();
 
             mpName = message.Remove(0, message.IndexOf("!;mp make") + 10).ToString();
             //skiping format of msg sent by irc (:username!cho@...)
@@ -110,18 +113,18 @@ namespace OsuTournamentBot.Match_Interaction
 
                 Console.WriteLine("------------------------");
 
-                Console.WriteLine("Lobby name =" + @"{0}", mpName);
-                Console.WriteLine("Lobby Creator =" + @"{0}", mpCreator);
-                Console.WriteLine("Lobby Link ={0}", matchLink);
-                Console.WriteLine("Lobby Id ={0}", matchId);
+                Console.WriteLine("Lobby name = " + @"{0}", mpName);
+                Console.WriteLine("Lobby Creator = " + @"{0}", mpCreator);
+                Console.WriteLine("Lobby Link = {0}", matchLink);
+                Console.WriteLine("Lobby Id = {0}", matchId);
 
                 Console.WriteLine("------------------------");
                 //Console Log (just for now, to get if everything is alright)
 
-                Irc.sendPrivMessage("Lobby Name =" + @mpName, mpCreator);
-                Irc.sendPrivMessage("Lobby Host =" + @mpCreator, mpCreator);
-                Irc.sendPrivMessage("Lobby Link =" + matchLink, mpCreator);
-                Irc.sendPrivMessage("Lobby Id   =" + matchId, mpCreator);
+                Irc.sendPrivMessage("Lobby Name = \"" + @mpName + "\"", mpCreator);
+                Irc.sendPrivMessage("Lobby Host = " + @mpCreator, mpCreator);
+                Irc.sendPrivMessage("Lobby Link = " + matchLink, mpCreator);
+                Irc.sendPrivMessage("Lobby Id   = " + matchId, mpCreator);
                 //Priv msg for "Host" - person who made lobby
 
                 channelName = "mp_" + matchId;
@@ -172,13 +175,13 @@ namespace OsuTournamentBot.Match_Interaction
 
 
 
-                Irc.sendChatMessage("!mp move " + mpCreator + " 1", "mp_" + matchId);
+                //Irc.sendChatMessage("!mp move " + mpCreator + " 1", "mp_" + matchId);
                 //Forcefully moving the Creator to lobby
 
 
-                Irc.sendChatMessage("!mp host " + mpCreator, "mp_" + matchId);
+                //Irc.sendChatMessage("!mp host " + mpCreator, "mp_" + matchId);
                 //Giving Host to the lobby Creator
-
+                System.Threading.Thread.Sleep(5000);
                 invitePlayers();
             }
         }
@@ -186,16 +189,27 @@ namespace OsuTournamentBot.Match_Interaction
         {
             for (int i = 0; i < countTeams; i++)
             {
-                for (int j = 0; j < Teams[i].countPlayers; j++)
+                for (int j = 0; j < Teams[i].GetPlayersCount(); j++)
                 {
-                    Irc.sendPrivMessage("Do you want to be moved into " + mpName + " lobby? : {!; 1} - yes | {!; 2} - no", Teams[i].Players_nicks[j]);
+                    System.Threading.Thread.Sleep(250);
+                    Irc.sendPrivMessage("Do you want to be moved into " + mpName + " lobby? : {!; 1} - yes | {!; 2} - no", Teams[i].GetPlayersNicks()[j]);
                 }
             }
         }
 
-        public void movePlayer(string nick,int slot)
+        public void movePlayer(string nick, int slot)
         {
-            Irc.sendChatMessage("!mp move " + nick + " " + slot, "#mp_" + matchId);
+            Irc.sendChatMessage("!mp move " + nick + " " + slot, "mp_" + matchId);
+        }
+
+        public string GetMatchId()
+        {
+            return matchId;
+        }
+
+        public void SetMatchId(string matchId)
+        {
+            this.matchId = matchId;
         }
 
 

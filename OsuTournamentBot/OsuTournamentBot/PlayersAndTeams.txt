@@ -1,11 +1,11 @@
-﻿Amount of Teams = [3]; //Delete [] and write count in that place || 2-16
-Players in Team 1 = [0], //Delete [] and write count in that place || 1-8
+﻿Amount of Teams = [1]; //Delete [] and write count in that place || 2-16
+Players in Team 1 = [1], //Delete [] and write count in that place || 1-8
 {//JK, write the number into [], not delete it XD
-
+OshieteKudasai
 }
-Players in Team 2 = [0], //Delete [] and write count in that place || 1-8
+Players in Team 2 = [1], //Delete [] and write count in that place || 1-8
 {//JK, write the number into [], not delete it XD
-
+[_Yui_]
 }
 Players in Team 3 = [0], //Delete [] and write count in that place || 1-8
 {//JK, write the number into [], not delete it XD

@@ -39,6 +39,7 @@ namespace OsuTournamentBot
             inputStream = new StreamReader(tcpClient.GetStream());
             outputStream = new StreamWriter(tcpClient.GetStream());
 
+
             outputStream.WriteLine("PASS " + password);
             outputStream.WriteLine("NICK " + userName);
             outputStream.WriteLine("USER " + userName + " 8 * :" + userName);
@@ -74,9 +75,9 @@ namespace OsuTournamentBot
             sendIrcMessage("PRIVMSG #" + channel + " :" + message);
         }
 
-        
 
-        
-        
+
+
+
     }
 }

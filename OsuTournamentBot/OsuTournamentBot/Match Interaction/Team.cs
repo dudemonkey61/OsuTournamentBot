@@ -9,21 +9,27 @@ namespace OsuTournamentBot.Match_Interaction
 {
     public class Team
     {
-        public int countPlayers;
+        private int countPlayers;
+
+
+
         int TotalPlayers;
         string[] TeamsAndPlayers;
-
+        private Player[] players;
         int index;
-        public Team(int index, int TotalPlayers,string[] TeamsAndPlayers)
+        public Team(int index, int TotalPlayers, string[] TeamsAndPlayers)
         {
             this.index = index;
             this.TotalPlayers = TotalPlayers;
             this.TeamsAndPlayers = TeamsAndPlayers;
         }
 
-        public string[] Players_nicks= {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "" };
-        
-        public void getPlayers(int index)
+        private string[] Players_nicks = { "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "" };
+
+
+
+
+        public void readPlayers(int index)
         {
             string helpString;
             int PlayersCount;
@@ -54,20 +60,46 @@ namespace OsuTournamentBot.Match_Interaction
                     TotalPlayers++;
                 }
             }
-            Player[] players = new Player[PlayersCount];
+            players = new Player[PlayersCount];
             for (int i = 0; i < PlayersCount; i++)
             {
                 if (i == 0)
                 {
-                    players[i] = new Player(Players_nicks[i], true, i+1);
-                    Console.WriteLine(players[i].name + " " + players[i].number + " " + players[i].captain);
+                    players[i] = new Player(Players_nicks[i], true, i + 1);
+                    Console.WriteLine(players[i].GetName() + " " + players[i].GetNumber() + "   is captain -" + players[i].GetCaptain());
                 }
                 else
                 {
-                    players[i] = new Player(Players_nicks[i], false, i+1);
-                    Console.WriteLine(players[i].name + " " + players[i].number + " " + players[i].captain);
+                    players[i] = new Player(Players_nicks[i], false, i + 1);
+                    Console.WriteLine(players[i].GetName() + " " + players[i].GetNumber() + "   is captain -" + players[i].GetCaptain());
                 }
             }
         }
+
+        public Player[] GetPlayer()
+        {
+            return players;
+        }
+
+        public int GetPlayersCount()
+        {
+            return countPlayers;
+        }
+
+        public void SetPlayersCount(int countPlayers)
+        {
+            this.countPlayers = countPlayers;
+        }
+
+        public string[] GetPlayersNicks()
+        {
+            return Players_nicks;
+        }
+
+        public void SetPlayersNicks(string Players_nick, int index)
+        {
+            Players_nicks[index] = Players_nick;
+        }
     }
 }
+

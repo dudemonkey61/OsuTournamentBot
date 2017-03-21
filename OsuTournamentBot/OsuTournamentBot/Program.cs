@@ -15,6 +15,7 @@ namespace OsuTournamentBot
 
         public static void Main(string[] args)
         {
+
             //var readApiKey = File.ReadAllLines("DontLetPeopleSeeThis.txt").Take(1).First();
             //OsuAPI theApi = new OsuAPI(readApiKey);
             //MultiMatch multiMatch = theApi.GetMatch(112121);
@@ -29,8 +30,8 @@ namespace OsuTournamentBot
             Lobby_Setup lobby_1 = new Lobby_Setup(mp1);
             System.Threading.Thread.Sleep(500);
             //mp1.joinRoom("osu");
-            mp1.joinRoom("mp_31660566");
-            
+            //mp1.joinRoom("mp_31931935");
+
 
 
 
@@ -77,7 +78,7 @@ namespace OsuTournamentBot
                     }
                 }
                 //Main function for reading messages from IRC / it will omit useles part from cho.ppy.sh (QUIT/JOIN/PART)
-                
+                // + it should write : PING - PONG msg from and to server
 
                 if (message.Contains("!;mp make"))
                 {
@@ -97,18 +98,43 @@ namespace OsuTournamentBot
                     lobby_1.writeMatchContestants();
                 }
 
-                for(int i = 0; i < lobby_1.countTeams; i++)
+                if (!message.Contains("Do you want to be moved into") && (message.Contains("!; 1") || message.Contains("!; 2")))
                 {
-                    for(int j = 0; j < lobby_1.Teams[i].countPlayers; j++)
+                    for (int i = 0; i < lobby_1.countTeams; i++)
                     {
-                        if (message.Contains(lobby_1.Teams[i].Players_nicks[j]))
+                        for (int j = 0; j < lobby_1.Teams[i].GetPlayersCount(); j++)
                         {
-                            lobby_1.movePlayer(lobby_1.Teams[i].Players_nicks[j],lobby_1.slot++);
+                            if (
+                                message.Contains(lobby_1.Teams[i].GetPlayersNicks()[j])
+
+                                &&
+
+                                ((!message.Contains("Do you want to be moved into")&&(message.Contains("!; 1") || message.Contains("!; yes") || message.Contains("!;1") || message.Contains("!;no")) && lobby_1.Teams[i].GetPlayer()[i].GetInvDenied() == false)
+
+                                ))
+                            {
+                                lobby_1.movePlayer(lobby_1.Teams[i].GetPlayersNicks()[j], lobby_1.slot++);
+                            }
+                            if (
+                                message.Contains(lobby_1.Teams[i].GetPlayersNicks()[j])
+
+                                &&
+
+                                ((!message.Contains("Do you want to be moved into") && (message.Contains("!; 2") || message.Contains("!; no") || message.Contains("!;2") || message.Contains("!;no")))
+
+                                ))
+                            {
+                                lobby_1.Teams[i].GetPlayer()[j].SetInvDenied(true);
+                            }
                         }
                     }
                 }
                 //Experimental "!;mp make" function, using Lobby_Setup.cs 
+
+
             }
         }
+
+
     }
 }
