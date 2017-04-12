@@ -27,7 +27,8 @@ namespace OsuTournamentBot
 
 
             IrcClient mp1 = new IrcClient("cho.ppy.sh", 6667, ircUserName, ircAuthKey);
-            Lobby_Setup lobby_1 = new Lobby_Setup(mp1);
+            Lobby_Setup lobby_1_a = new Lobby_Setup(mp1);
+            WarmUp_Ban_Setup lobby1_b = new WarmUp_Ban_Setup(lobby_1_a);
             System.Threading.Thread.Sleep(500);
             //mp1.joinRoom("osu");
             //mp1.joinRoom("mp_31931935");
@@ -86,55 +87,145 @@ namespace OsuTournamentBot
                     {
                         if (message.Contains(alphaTester[i]))
                         {
-                            lobby_1.makeLobby(message);
+                            lobby_1_a.makeLobby(message);
                             break;
                         }
                     }
                 }
 
-                if (message.Contains("!;Contestants"))
+                if ((message.Contains(lobby_1_a.GetMatchId()) || isAdmin(message)) && message.Contains("!;"))
                 {
-                    lobby_1.readMatchContestants();
-                    lobby_1.writeMatchContestants();
-                }
-
-                if (!message.Contains("Do you want to be moved into") && (message.Contains("!; 1") || message.Contains("!; 2")))
-                {
-                    for (int i = 0; i < lobby_1.countTeams; i++)
+                    if (message.Contains("!; join"))
                     {
-                        for (int j = 0; j < lobby_1.Teams[i].GetPlayersCount(); j++)
+                        mp1.joinRoom(message.Remove(0, message.IndexOf("join ") + 5));
+                    }
+                    if ((message.Contains("!; Start") || message.Contains("!; start")) && ((lobby_1_a.getSize() == lobby_1_a.GetSlot())|| isAdmin(message)))
+                    {
+                        lobby1_b.askForWarmUpLink();
+                    }
+
+                    for (int i = 0; i < lobby_1_a.countTeams; i++)
+                    {
+                        for (int j = 0; j < lobby_1_a.Teams[i].GetPlayersCount(); j++)
                         {
                             if (
-                                message.Contains(lobby_1.Teams[i].GetPlayersNicks()[j])
+
+                                (
+                                message.Contains(@"https://osu.ppy.sh/s/")
+                                ||
+                                message.Contains(@"https://osu.ppy.sh/b/")
+                                )
 
                                 &&
 
-                                ((!message.Contains("Do you want to be moved into")&&(message.Contains("!; 1") || message.Contains("!; yes") || message.Contains("!;1") || message.Contains("!;no")) && lobby_1.Teams[i].GetPlayer()[i].GetInvDenied() == false)
-
-                                ))
-                            {
-                                lobby_1.movePlayer(lobby_1.Teams[i].GetPlayersNicks()[j], lobby_1.slot++);
-                            }
-                            if (
-                                message.Contains(lobby_1.Teams[i].GetPlayersNicks()[j])
-
+                                (
+                                message.Contains(lobby_1_a.Teams[i].GetPlayersNicks()[j])
                                 &&
+                                lobby_1_a.Teams[i].GetPlayer()[j].GetCaptain()
+                                )
 
-                                ((!message.Contains("Do you want to be moved into") && (message.Contains("!; 2") || message.Contains("!; no") || message.Contains("!;2") || message.Contains("!;no")))
+                              )
 
-                                ))
                             {
-                                lobby_1.Teams[i].GetPlayer()[j].SetInvDenied(true);
+                                lobby1_b.setWarmUpLink(message);
+                                lobby1_b.pickWarmUpMap();
                             }
+
+                            if (message.Contains("!; map start") && ((lobby_1_a.Teams[i].GetPlayer()[j].GetCaptain() && message.Contains(lobby_1_a.Teams[i].GetPlayer()[j].GetName())))||isAdmin(message))
+                            {
+                                lobby1_b.startMap();
+                            }
+
                         }
                     }
+
+                        if (message.Contains("!;Contestants") && isAdmin(message))
+                        {
+                            lobby_1_a.readMatchContestants();
+                            lobby_1_a.writeMatchContestants();
+                        }
+
+
+
+                        if (!message.Contains("Do you want to be moved into") && (message.Contains("!; 1") || message.Contains("!; 2")))
+                        {
+                            for (int l = 0; l < lobby_1_a.countTeams; l++)
+                            {
+                                for (int j = 0; j < lobby_1_a.Teams[l].GetPlayersCount(); j++)
+                                {
+                                    if (
+                                        message.Contains(lobby_1_a.Teams[l].GetPlayersNicks()[j])
+
+                                        &&
+
+                                        ((!message.Contains("Do you want to be moved into") &&
+
+                                        (message.Contains("!; 1") ||
+                                        message.Contains("!; yes") ||
+                                        message.Contains("!;1") ||
+                                        message.Contains("!;no")
+                                        ) &&
+
+                                        lobby_1_a.Teams[l].GetPlayer()[l].GetInvDenied() == false)
+
+                                        ))
+                                    {
+                                        lobby_1_a.movePlayer(lobby_1_a.Teams[l].GetPlayer()[j].GetName(), lobby_1_a.GetSlot());
+                                        lobby_1_a.Teams[l].GetPlayer()[j].SetSlot(lobby_1_a.GetSlot());
+                                        lobby_1_a.SetSlot(lobby_1_a.GetSlot() + 1);
+
+                                    }
+                                    if (
+                                        message.Contains(lobby_1_a.Teams[l].GetPlayersNicks()[j])
+
+                                        &&
+
+                                        ((!message.Contains("Do you want to be moved into") &&
+
+                                        (
+                                        message.Contains("!; 2") ||
+                                        message.Contains("!; no") ||
+                                        message.Contains("!;2") ||
+                                        message.Contains("!;no")
+                                        )
+
+                                        ))
+
+                                        )
+                                    {
+                                        lobby_1_a.Teams[l].GetPlayer()[j].SetInvDenied(true);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+
+
+                    if (isAdmin(message) && (message.Contains("!; DIE") || message.Contains("!; die")))
+                    {
+                        break;
+                    }
+
                 }
-                //Experimental "!;mp make" function, using Lobby_Setup.cs 
+            }
+        
 
 
+
+        static bool isAdmin(string message)
+        {
+            if ((message.Contains(":OshieteKudasai!cho@ppy.sh") || message.Contains(":[_Yui_]!cho@ppy.sh")))
+            {
+                return true;
+            }
+
+            else
+            {
+                return false;
             }
         }
 
-
     }
 }
+

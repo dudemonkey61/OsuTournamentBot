@@ -86,6 +86,7 @@ namespace OsuTournamentBot.Match_Interaction
             return countPlayers;
         }
 
+
         public void SetPlayersCount(int countPlayers)
         {
             this.countPlayers = countPlayers;

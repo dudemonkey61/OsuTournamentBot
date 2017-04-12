@@ -12,11 +12,22 @@ namespace OsuTournamentBot.Match_Interaction
         private bool captain;
         private int number;
         private bool invDenied = false;
+        private int slot;
         public Player(string name, bool captain, int number)
         {
             this.name = name;
             this.captain = captain;
             this.number = number;
+        }
+
+        public int GetSlot()
+        {
+            return slot;
+        }
+
+        public void SetSlot(int slot)
+        {
+            this.slot = slot;
         }
 
         public string GetName()

@@ -75,6 +75,11 @@ namespace OsuTournamentBot
             sendIrcMessage("PRIVMSG #" + channel + " :" + message);
         }
 
+        public void sendLobbyMessage(string message, string lobbyId)
+        {
+            sendIrcMessage("PRIVMSG #mp_" + lobbyId + " :" + message);
+        }
+
 
 
 

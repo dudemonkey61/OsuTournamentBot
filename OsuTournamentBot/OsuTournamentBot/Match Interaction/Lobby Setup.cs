@@ -11,8 +11,8 @@ namespace OsuTournamentBot.Match_Interaction
 {
     class Lobby_Setup
     {
-        IrcClient Irc;
-        private string matchId;
+        private IrcClient Irc;
+        private string matchId="";
 
 
         string matchLink;
@@ -21,7 +21,20 @@ namespace OsuTournamentBot.Match_Interaction
         string channelName;
         public int countTeams;
         public List<Team> Teams = new List<Team>();
-        public int slot = 1;
+        private int slot = 1;
+        private int size;
+
+        public int getSize()
+        {
+            return size;
+        }
+
+        public void setSize(int size)
+        {
+            this.size = size;
+        }
+
+
 
 
         public Lobby_Setup(IrcClient Irc)
@@ -146,6 +159,7 @@ namespace OsuTournamentBot.Match_Interaction
                     size = lobbySettings[0];
                     size = size.Remove(0, 5);
                     size = size.Remove(1, size.Length - 1);
+                    setSize(int.Parse(size));
                 }
                 //Geting size from "Match Settings.txt"
 
@@ -199,7 +213,7 @@ namespace OsuTournamentBot.Match_Interaction
 
         public void movePlayer(string nick, int slot)
         {
-            Irc.sendChatMessage("!mp move " + nick + " " + slot, "mp_" + matchId);
+            Irc.sendLobbyMessage("!mp move " + nick + " " + slot,matchId);
         }
 
         public string GetMatchId()
@@ -212,7 +226,20 @@ namespace OsuTournamentBot.Match_Interaction
             this.matchId = matchId;
         }
 
+        public int GetSlot()
+        {
+            return slot;
+        }
 
+        public void SetSlot(int slot)
+        {
+            this.slot = slot;
+        }
+
+        public IrcClient GetIrcClient()
+        {
+            return Irc;
+        }
     }
 }
 

@@ -52,7 +52,7 @@
     <Compile Include="Match Interaction\Map-Pick Setup.cs" />
     <Compile Include="Match Interaction\Player.cs" />
     <Compile Include="Match Interaction\Team.cs" />
-    <Compile Include="Match Interaction\WarmUp-Ban Setup.cs" />
+    <Compile Include="Match Interaction\WarmUp_Ban_Setup.cs" />
     <Compile Include="OsuAPI\DataObjects\Game.cs" />
     <Compile Include="OsuAPI\DataObjects\Match.cs" />
     <Compile Include="OsuAPI\DataObjects\MatchScore.cs" />
